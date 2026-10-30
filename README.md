@@ -12,6 +12,7 @@ Reutilizar la **placa principal de un Roomba 616** (serie R800, STM32F103ZET6) c
 | [`RoombaOI/examples/SensorStream`](RoombaOI/examples/SensorStream/SensorStream.ino) | Imprime por serie los sensores leídos por stream. No mueve nada. |
 | [`RoombaOI/examples/WebControl`](RoombaOI/examples/WebControl/WebControl.ino) | Control desde el móvil por WiFi (el ESP32 crea su propia red). |
 | [`roomba_test/`](roomba_test/roomba_test.ino) | Sketch de pruebas por monitor serie, usado para descubrir cómo responde el hardware. |
+| [`jetson/`](jetson/) | **Etapa 2:** código del Jetson Nano para que el robot converse y razone (escuchar, Mistral con herramientas y memoria, hablar). Ver [docs/jetson/](docs/jetson/README.md). |
 | [`docs/`](docs/) | [Hardware y hallazgos](docs/hardware.md), [notas del OI](docs/oi-notes.md) y [estado del proyecto](docs/estado.md). |
 
 ## Estado
