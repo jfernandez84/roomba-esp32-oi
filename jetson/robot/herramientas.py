@@ -261,6 +261,16 @@ def cancelar_temporizadores():
     return {"cancelados": timers.clear()}
 
 
+def mirar(pregunta=None):
+    import camara   # se importa aquí para no cargar la cámara si nunca se usa
+    try:
+        return {"veo": camara.look(pregunta),
+                "instruccion": "Cuenta solo lo que dice 'veo'. No añadas objetos ni personas que conozcas "
+                               "por tus recuerdos: lo que no aparece ahí, no se ve."}
+    except Exception as error:
+        return {"error": "No pude usar la cámara: %s" % str(error)[:120]}
+
+
 def recordar(dato):
     if memory.add(dato):
         return {"ok": True, "anotado": dato}
@@ -276,6 +286,7 @@ def olvidar_todo():
 
 
 FUNCTIONS = {
+    "mirar": mirar,
     "recordar": recordar,
     "olvidar": olvidar,
     "olvidar_todo": olvidar_todo,
@@ -288,11 +299,24 @@ FUNCTIONS = {
 
 TOOLS = [
     {"type": "function", "function": {
+        "name": "mirar",
+        "description": "Toma UNA foto con la cámara del robot y la analiza para describir lo que hay delante o "
+                       "responder una pregunta sobre lo que se ve (objetos, personas, texto). Úsala SOLO cuando "
+                       "la persona te pida expresamente que mires, veas, describas, leas o reconozcas algo. "
+                       "Nunca la uses por iniciativa propia ni 'por si acaso'. La foto se envía a Mistral para "
+                       "analizarla y no se guarda.",
+        "parameters": {"type": "object", "properties": {
+            "pregunta": {"type": "string",
+                         "description": "Lo que la persona quiere saber de la imagen, con sus palabras. Si solo "
+                                        "pidió mirar, no pongas este campo."}}}}},
+    {"type": "function", "function": {
         "name": "recordar",
         "description": "Guarda un dato para recordarlo en futuras conversaciones. Úsala cuando te pidan "
                        "que recuerdes algo o cuando la persona cuente un dato personal duradero (su nombre, "
                        "familia, mascotas, gustos, rutinas). Escribe el dato como una frase corta y clara en "
-                       "tercera persona, con las palabras exactas que dijo la persona (por ejemplo, con el "
+                       "tercera persona, con las palabras exactas que dijo la persona y SIN interpretar ni "
+                       "añadir nada: no cambies el tipo de dato (un gusto no es una mascota, ni un objeto es "
+                       "una persona) ni digas que le gusta algo si no lo dijo (por ejemplo, con el "
                        "formato 'A la persona le gusta <algo>.' o 'La mascota de la persona se llama <nombre>.'; "
                        "esos marcadores no son datos reales). Nunca guardes contraseñas, números de tarjeta, "
                        "datos de salud ni nada sensible.",

@@ -29,6 +29,7 @@ Por qué el ESP32 en medio, y no el Jetson hablando directamente con el OI:
 | 0 | Identificar el modelo de Jetson y reunir lo necesario | hecho: Jetson Nano Developer Kit (P3450) |
 | 1 | Instalar el sistema, primer arranque, actualizar, acceso remoto por SSH | en curso, ver [01-instalacion.md](01-instalacion.md) |
 | 1b | El robot conversa y razona (escuchar, Mistral, hablar) | hecho, ver [02-conversacion.md](02-conversacion.md) |
+| 1c | El robot ve (cámara, visión) y tiene candados de privacidad | hecho; el filtro del nombre aún sin probar a fondo, ver [03-vision-y-seguridad.md](03-vision-y-seguridad.md) |
 | 2 | Conectar el Jetson con el ESP32 (USB serie) y un protocolo de órdenes con parada de seguridad | pendiente |
 | 3 | Software de movimiento autónomo, empezando sin sensores nuevos (encoders, parachoques, acantilados) | pendiente |
 | 4 | Sensores nuevos (cámara o LiDAR), cuando se decidan | pendiente |

@@ -5,3 +5,11 @@ build/
 # Spec de iRobot: tiene copyright de iRobot, no se redistribuye. Descargala de la web de iRobot.
 *.PDF
 *.pdf
+
+# Fotos de prueba de la cámara: son privadas, no se suben
+jetson/visor/*.jpg
+jetson/visor/foto_mac
+
+# Python
+__pycache__/
+*.pyc

@@ -10,7 +10,9 @@ El Jetson escucha, razona y habla, en español latino. Esta fase todavía no mue
 | **Entender** lo que dices: Voxtral (por defecto) | Nube (Mistral) | El audio de cada frase detectada (no el micrófono abierto todo el rato) |
 | Entender con Vosk (opcional, `--stt vosk`) | Local | Nada |
 | **Razonar**: Mistral Small | Nube | El texto de la conversación |
-| **Hablar**: Piper, voz `es_MX-claude-high` | Local | Nada |
+| **Hablar**: voz de Mistral (Voxtral TTS, `voice_483`), por defecto | Nube (Mistral) | El texto de cada respuesta |
+| Hablar con Piper, voz `es_MX-claude-high` (respaldo, o con `--voz piper`) | Local | Nada |
+| **Ver**: foto y modelo de visión (ver [03](03-vision-y-seguridad.md)) | Nube (Mistral) | La imagen, solo cuando se pide mirar |
 | Sonido de salida por HDMI | Local | Nada |
 
 La clave de la API de Mistral se guarda en `~/robot/.env` del Jetson (permisos 600) y **nunca** en este repositorio. No he revisado la política de conservación de datos de Mistral.
@@ -32,7 +34,10 @@ La solución que funcionó sin tocar el sistema: [`jetson/scripts/fetch_focal_li
 |---|---|
 | [`jetson/robot/conversar.py`](../../jetson/robot/conversar.py) | El bucle de conversación completo |
 | [`jetson/robot/mistral_client.py`](../../jetson/robot/mistral_client.py) | Cliente mínimo de Mistral con `requests` (el SDK oficial no instala en Python 3.6) |
-| `jetson/robot/api_check.py`, `voices_check.py`, `stt_cloud_test.py`, `stt_local_test.py`, `tts_cloud_test.py` | Pruebas sueltas |
+| [`jetson/robot/herramientas.py`](../../jetson/robot/herramientas.py) | Herramientas del robot (clima, hora, temporizadores, memoria, mirar) |
+| [`jetson/robot/camara.py`](../../jetson/robot/camara.py) | Foto y visión (ver [03](03-vision-y-seguridad.md)) |
+| [`jetson/visor/`](../../jetson/visor/) | Visor en directo y cámara del Mac (ver [03](03-vision-y-seguridad.md)) |
+| `jetson/robot/prueba_*.py`, `api_check.py`, `voices_check.py`, `stt_*_test.py`, `tts_cloud_test.py` | Pruebas sueltas |
 | `jetson/scripts/say.sh`, `run_isolated.sh`, `fetch_focal_libs.sh` | Lanzadores de Piper y Vosk |
 
 ## Cómo ejecutarlo (en el Jetson)
@@ -41,9 +46,12 @@ La solución que funcionó sin tocar el sistema: [`jetson/scripts/fetch_focal_li
 sh ~/robot/run_isolated.sh ~/robot/conversar.py                    # Voxtral en la nube (por defecto)
 sh ~/robot/run_isolated.sh ~/robot/conversar.py --stt vosk         # Vosk local
 sh ~/robot/run_isolated.sh ~/robot/conversar.py --nombre Robi      # nombre del robot
+sh ~/robot/run_isolated.sh ~/robot/conversar.py --voz piper        # voz local (más lenta) en vez de la de Mistral
+sh ~/robot/run_isolated.sh ~/robot/conversar.py --siempre          # responde a todo, sin necesidad del nombre
+sh ~/robot/run_isolated.sh ~/robot/conversar.py --ventana 30       # segundos de conversación abierta sin decir el nombre
 ```
 
-Se termina con Ctrl+C o diciendo "adiós". Se necesitan los modelos en `~/robot/models/vosk-model-small-es-0.42` y `~/robot/tts/voices/es_MX-claude-high.onnx`.
+Por defecto el robot **solo reacciona cuando oye su nombre** ("Robi, ...") o durante la ventana de conversación (20 s) que sigue a cada cosa que dice. Se termina con Ctrl+C o diciendo "adiós". Se necesitan los modelos en `~/robot/models/vosk-model-small-es-0.42` y `~/robot/tts/voices/es_MX-claude-high.onnx`.
 
 ## Resultados de las pruebas
 
@@ -51,7 +59,7 @@ Se termina con Ctrl+C o diciendo "adiós". Se necesitan los modelos en `~/robot/
 - **Escuchar (Voxtral):** acertó una frase de prueba con puntuación.
 - **Razonar:** `mistral-small-latest` responde en unos 0,8 s. Con una cuenta **sin crédito**, Small y Medium daban error 429 (límite 0); los Ministral sí funcionaban. Con crédito de pago por uso, todos funcionan.
 - **Hablar (Piper):** la voz `claude-high` suena bien. `ald-medium` sonó mal y se descartó. La síntesis es más lenta que el tiempo real (de 1,4 a 2,4 veces) porque el Jetson está en el modo de 5 W; las frases se generan y se reproducen en paralelo para reducir la espera.
-- **Voz de Mistral (Voxtral TTS):** descartada: solo tiene 10 voces en inglés y suena con acento inglés.
+- **Voz de Mistral (Voxtral TTS):** con el modelo `voxtral-mini-tts-latest` (la v1) la API solo mostraba 10 voces, todas en inglés, y una voz del listado daba error. Con el modelo `voxtral-mini-tts-3-0` y una voz elegida en la consola de Mistral (`voice_483`) suena bien en español y es la voz por defecto. La primera palabra suena a los 1,3 a 2,5 s. Piper queda de respaldo.
 - **HDMI:** se comía el inicio del audio; se arregla con 0,6 s de silencio inicial.
 
 ## Herramientas (function calling)
@@ -69,7 +77,7 @@ Resultado de la prueba: el robot llamó a `clima` y dijo "unos veinte grados", p
 
 Para añadir una herramienta: escribir la función, describirla en `TOOLS` y registrarla en `FUNCTIONS`. Si una herramienta falla, devuelve un error al modelo, que lo explica en vez de inventar un dato.
 
-Lo que **no** sabe hacer (y no debe prometer): buscar en internet, música/Spotify, recordar entre conversaciones, ver, moverse.
+Además tiene `mirar` (visión, ver [03](03-vision-y-seguridad.md)) y la memoria de abajo. Lo que **no** sabe hacer (y no debe prometer): buscar en internet, música/Spotify y moverse.
 
 ## Memoria persistente
 
@@ -80,7 +88,7 @@ Herramientas: `recordar(dato)`, `olvidar(texto)` (borra los recuerdos que conten
 No guarda contraseñas, claves, PIN, números de tarjeta ni datos de salud, y lo rechaza aunque se lo pidan.
 
 ### Qué se comprobó
-- Recuerda entre sesiones: tras cerrar y reabrir el programa, contestó "Tu gato se llama Tommy".
+- Recuerda entre sesiones: tras cerrar y reabrir el programa, contestó "Tu gato se llama X" con el nombre que se le había dicho.
 - Olvidar, olvidar todo con confirmación, y rechazar una contraseña: bien.
 - Prueba sin audio (`jetson/robot/prueba_memoria_texto.py`, con memoria temporal): **6 de 7** frases bien en dos ejecuciones seguidas, pero **el caso que falla cambia de una ejecución a otra** (el modelo no es determinista en los casos dudosos, como el nombre de una red wifi).
 
@@ -92,8 +100,8 @@ No guarda contraseñas, claves, PIN, números de tarjeta ni datos de salud, y lo
 ## Problemas conocidos y pendientes
 
 - **Alimentación:** una fuente de 5 V y 4 A con conector cilíndrico (jumper en J48) permitiría el modo de 10 W y acelerar la voz. Con la actual el Jetson se apagó.
-- **Más herramientas pendientes:** memoria persistente entre conversaciones, Spotify (requiere cuenta Premium y registrar una aplicación; sin verificar), calendario, domótica.
+- **Más herramientas pendientes:** Spotify (requiere cuenta Premium y registrar una aplicación; sin verificar), calendario, domótica.
 - **Latencia del clima:** Open-Meteo a veces tarda; una vez dio 8 s. Se mitigó con caché y reintentos.
-- **Palabra de activación:** ahora escucha siempre. El micrófono abierto con altavoces puede oírse a sí mismo; se evita no escuchando mientras habla.
+- **Nombre del robot:** implementado (ver [03](03-vision-y-seguridad.md)), pero **sin comprobar** que ignore de verdad lo que se dice fuera de la ventana de conversación. El micrófono abierto con altavoces puede oírse a sí mismo; se evita no escuchando mientras habla.
 - **WiFi:** el Nano no trae adaptador; hace falta uno compatible para que el robot se mueva por la casa.
 - **Integración con la base:** pendiente (Fase 3).

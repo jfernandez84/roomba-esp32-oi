@@ -85,7 +85,7 @@ def list_voices():
 TTS_MODEL = "voxtral-mini-tts-3-0"  # "voxtral-mini-tts-latest" apuntaba a la v1 y rechazaba las voces nuevas
 
 
-def speak(text, voice_id=None, model=TTS_MODEL, fmt="wav"):
+def speak(text, voice_id=None, model=TTS_MODEL, fmt="wav", timeout=60):
     """Sintetiza voz con Voxtral TTS. Devuelve los bytes del audio (la API los manda en base64).
 
     voice_id acepta el identificador largo o el "slug" de la voz, por ejemplo "voice_483"."""
@@ -97,7 +97,7 @@ def speak(text, voice_id=None, model=TTS_MODEL, fmt="wav"):
             API + "/audio/speech",
             headers=_headers({"Content-Type": "application/json"}),
             json=body,
-            timeout=60,
+            timeout=timeout,
         )
     )
     return base64.b64decode(_check(r).json()["audio_data"])
