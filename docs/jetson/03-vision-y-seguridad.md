@@ -46,7 +46,7 @@ Las instrucciones al modelo no bastaron: incumplió varias, así que las reglas 
 | **Borrar memoria** | `olvidar` solo si la persona pide olvidar o borrar algo; `olvidar_todo` solo si antes pidió olvidar todo y ahora confirma con un sí | Con un ruido ("la delicia.") el modelo propuso borrar toda la memoria |
 | **Guardar sin hacerlo** | Si dice que anotó algo y no llamó a `recordar`, se le obliga a llamarla (`tool_choice: "any"`) | Decía "anotado" sin guardar nada |
 | **Ruido** | Se ignora lo que no tiene al menos 3 letras ("6", "eh"), salvo "sí", "no", "ok", "ya", "vale" | Respondió "¿En qué puedo ayudarte?" a un "6" |
-| **Nombre** | Solo reacciona si oye su nombre (Roby, Robby, Robi, Robbie...) o durante 20 s tras hablar él. El primer filtro lo hace Vosk en local | Respondía a todo lo que oía, incluida una conversación telefónica de fondo |
+| **Nombre** | Solo reacciona si oye su nombre (Nexus; Vosk lo oye bien unas 5 de 8 veces) o durante 20 s tras hablar él. El primer filtro lo hace Vosk en local | Respondía a todo lo que oía, incluida una conversación telefónica de fondo |
 | **Umbral de voz** | Tope de 1800 y ajuste continuo; avisa si no oye nada en 15 s | Midió 1209 de ruido al arrancar, el umbral subió a 3627 y no oía a nadie |
 | **Longitud** | Máximo 3 frases, sin dejar una a medias | Un monólogo de ~170 palabras tardó 31 s en decirse |
 | **Voz** | Tope de 15 s para la voz de Mistral y Piper de respaldo ya cargado | La API se quedó 60 s sin responder y el robot tardó 67 s en hablar |
@@ -56,7 +56,8 @@ Las instrucciones al modelo no bastaron: incumplió varias, así que las reglas 
 
 - **Sin audio** (`jetson/robot/prueba_vision_texto.py`, sin cámara ni red): reglas de la cámara 21 de 21, borrado de memoria 10 de 10, detección del nombre 11 de 11, filtro de ruido 14 de 14, y recorte de respuestas. Con `--real` toma fotos de verdad.
 - **Hablando:** la cámara se comprobó contando fotos: el servidor del Mac registró exactamente tantas fotos como peticiones de ver (5 y 5, después 2 y 2), y los intentos bloqueados no generaron ninguna.
-- **No comprobado:** que el filtro del nombre ignore de verdad lo que se dice fuera de la ventana de conversación. En la prueba, todas las frases llegaron dentro de la ventana y el filtro nunca llegó a actuar.
+- **Filtro del nombre con voz real** (`jetson/robot/prueba_nombre_voz.py`: solo micrófono y Vosk, sin nube; imprime lo que oyó Vosk y si habría activado al robot). Con el nombre "Roby", Vosk dio "robin", "robby" y "robé": 2 de 3, hasta aceptar "robé". Se cambió el nombre a **Nexus**, que no se confunde con palabras comunes. Resultado: 5 de 8 (el nombre dicho como "nexus"; fallos: "sus" ×2 y "con anexos") y **ningún falso positivo** ("nexo", "texto" y frases sin nombre se ignoraron). Es una muestra pequeña. Se dejó el filtro estricto: no se acepta "sus" (palabra común). Si no oye el nombre hay que repetirlo; dentro de la ventana de 20 s no hace falta.
+- **No comprobado:** la conversación completa con el filtro activo (nombre, ventana y habla de fondo a la vez), y de dónde vienen los avisos `arecord: Device or resource busy` al arrancar.
 
 ## Privacidad
 

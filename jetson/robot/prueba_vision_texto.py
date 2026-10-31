@@ -15,7 +15,7 @@ import conversar
 
 # (frase, ¿se obliga a mirar?, ¿se permite que el modelo mire?)
 CASES = [
-    ("Hola, Roby, dime si puedes ver.", False, True),
+    ("Hola, Nexus, dime si puedes ver.", False, True),
     ("Dime que te estoy sosteniendo con mi mano.", True, True),
     ("Lo estoy mostrando a la cámara en este momento.", True, True),
     ("Perfecto.", False, False),                    # el caso que falló: foto sin que nadie la pidiera
@@ -78,11 +78,11 @@ print("\n%d de %d bien" % (len(FORGET_CASES) - forget_bad, len(FORGET_CASES)))
 
 print("\nPARTE A4: ¿le hablan al robot? (su nombre, y lo que NO debe activarlo)\n")
 NAME_CASES = [
-    ("Hola, Roby, ¿cómo estás?", True),
-    ("Robbie, dime lo que estás viendo.", True),
-    ("la robin cómo estás", True),
-    ("Robi, ¿qué hora es?", True),
-    ("hola robby", True),
+    ("Hola, Nexus, ¿cómo estás?", True),
+    ("Néxus, dime lo que estás viendo.", True),
+    ("la nexus cómo estás", True),
+    ("Nexus, ¿qué hora es?", True),
+    ("hola nexus", True),
     ("la delicia.", False),                  # ruido que casi borra la memoria
     ("¡Vamos a ver!", False),
     ("Salam.", False),
@@ -124,11 +124,11 @@ if "--real" in sys.argv:
     import herramientas
     print("\nPARTE B: con la cámara real\n")
     system = {"role": "system",
-              "content": conversar.SYSTEM_PROMPT.format(nombre="Robi", ciudad=herramientas.DEFAULT_CITY)
+              "content": conversar.SYSTEM_PROMPT.format(nombre="Nexus", ciudad=herramientas.DEFAULT_CITY)
               + "\n\n" + herramientas.memory.as_prompt()}
     history = []
     for phrase in ("¿Qué ves?", "Perfecto.", "¿Qué hora es?", "Dime qué estoy sosteniendo con mi mano."):
         history.append({"role": "user", "content": phrase})
         reply = conversar.respond(system, history)
         history.append({"role": "assistant", "content": reply})
-        print("Tú: %s\n    Robi: %s\n" % (phrase, reply))
+        print("Tú: %s\n    Nexus: %s\n" % (phrase, reply))

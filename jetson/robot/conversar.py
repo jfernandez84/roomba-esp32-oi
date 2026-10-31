@@ -10,7 +10,7 @@
 Se ejecuta con run_isolated.sh, porque Vosk y Piper necesitan librerías más nuevas que las del
 Ubuntu 18.04 del Jetson Nano:
     sh ~/robot/run_isolated.sh ~/robot/conversar.py [--stt voxtral|vosk] [--voz mistral|piper]
-                                                    [--voice-id voice_483] [--nombre Robi]
+                                                    [--voice-id voice_483] [--nombre Nexus]
 
 Para terminar: Ctrl+C, o decir "adiós" / "hasta luego".
 Qué sale a internet: el texto de la conversación (a Mistral, para razonar), el texto de cada respuesta
@@ -98,8 +98,8 @@ SYSTEM_PROMPT = (
 
 FAREWELL = ("adiós", "adios", "hasta luego", "nos vemos", "chao")
 
-# Su nombre tal como lo escribe el reconocimiento de voz: roby, robby, robi, robbie, robin...
-WAKE_WORD = re.compile(r"\brob{1,2}(y|i|ie|in|ee)\b", re.IGNORECASE)
+# Su nombre tal como lo escribe el reconocimiento de voz (a ajustar con prueba_nombre_voz.py): nexus, néxus...
+WAKE_WORD = re.compile(r"\bn[eé]xus\b", re.IGNORECASE)
 
 SHORT_ANSWERS = ("si", "sí", "no", "ok", "ya", "vale")   # respuestas cortas legítimas
 
@@ -502,7 +502,7 @@ def main():
     parser.add_argument("--stt", choices=("vosk", "voxtral"), default="voxtral")
     parser.add_argument("--voz", choices=("mistral", "piper"), default="mistral")
     parser.add_argument("--voice-id", default="voice_483", help="voz de Mistral (identificador o slug)")
-    parser.add_argument("--nombre", default="Robi")
+    parser.add_argument("--nombre", default="Nexus")
     parser.add_argument("--siempre", action="store_true",
                         help="responder a todo lo que oiga, sin necesidad de decir su nombre")
     parser.add_argument("--ventana", type=float, default=20.0,

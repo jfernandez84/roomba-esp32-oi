@@ -23,7 +23,7 @@ CASES = [
     ("Mi perro se llama Rocky y tiene tres años.", True),
 ]
 
-system_text = conversar.SYSTEM_PROMPT.format(nombre="Robi", ciudad=herramientas.DEFAULT_CITY)
+system_text = conversar.SYSTEM_PROMPT.format(nombre="Nexus", ciudad=herramientas.DEFAULT_CITY)
 history = []
 ok = 0
 for phrase, should_save in CASES:
@@ -35,7 +35,7 @@ for phrase, should_save in CASES:
     saved = len(herramientas.memory.items()) > before
     good = saved == should_save
     ok += good
-    print("%s Tú: %s\n    Robi: %s\n    guardó: %s (esperado: %s)\n" % (
+    print("%s Tú: %s\n    Nexus: %s\n    guardó: %s (esperado: %s)\n" % (
         "OK " if good else "MAL", phrase, reply, saved, should_save))
 
 print("Recuerdos al final:")

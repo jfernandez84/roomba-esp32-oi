@@ -37,6 +37,7 @@ La solución que funcionó sin tocar el sistema: [`jetson/scripts/fetch_focal_li
 | [`jetson/robot/herramientas.py`](../../jetson/robot/herramientas.py) | Herramientas del robot (clima, hora, temporizadores, memoria, mirar) |
 | [`jetson/robot/camara.py`](../../jetson/robot/camara.py) | Foto y visión (ver [03](03-vision-y-seguridad.md)) |
 | [`jetson/visor/`](../../jetson/visor/) | Visor en directo y cámara del Mac (ver [03](03-vision-y-seguridad.md)) |
+| `jetson/robot/prueba_nombre_voz.py` | Prueba con voz real del filtro del nombre (ver [03](03-vision-y-seguridad.md)) |
 | `jetson/robot/prueba_*.py`, `api_check.py`, `voices_check.py`, `stt_*_test.py`, `tts_cloud_test.py` | Pruebas sueltas |
 | `jetson/scripts/say.sh`, `run_isolated.sh`, `fetch_focal_libs.sh` | Lanzadores de Piper y Vosk |
 
@@ -45,13 +46,13 @@ La solución que funcionó sin tocar el sistema: [`jetson/scripts/fetch_focal_li
 ```bash
 sh ~/robot/run_isolated.sh ~/robot/conversar.py                    # Voxtral en la nube (por defecto)
 sh ~/robot/run_isolated.sh ~/robot/conversar.py --stt vosk         # Vosk local
-sh ~/robot/run_isolated.sh ~/robot/conversar.py --nombre Robi      # nombre del robot
+sh ~/robot/run_isolated.sh ~/robot/conversar.py --nombre Nexus     # nombre del robot
 sh ~/robot/run_isolated.sh ~/robot/conversar.py --voz piper        # voz local (más lenta) en vez de la de Mistral
 sh ~/robot/run_isolated.sh ~/robot/conversar.py --siempre          # responde a todo, sin necesidad del nombre
 sh ~/robot/run_isolated.sh ~/robot/conversar.py --ventana 30       # segundos de conversación abierta sin decir el nombre
 ```
 
-Por defecto el robot **solo reacciona cuando oye su nombre** ("Robi, ...") o durante la ventana de conversación (20 s) que sigue a cada cosa que dice. Se termina con Ctrl+C o diciendo "adiós". Se necesitan los modelos en `~/robot/models/vosk-model-small-es-0.42` y `~/robot/tts/voices/es_MX-claude-high.onnx`.
+Por defecto el robot **solo reacciona cuando oye su nombre** ("Nexus, ...") o durante la ventana de conversación (20 s) que sigue a cada cosa que dice. Se termina con Ctrl+C o diciendo "adiós". Se necesitan los modelos en `~/robot/models/vosk-model-small-es-0.42` y `~/robot/tts/voices/es_MX-claude-high.onnx`.
 
 ## Resultados de las pruebas
 
