@@ -57,7 +57,8 @@ Las instrucciones al modelo no bastaron: incumplió varias, así que las reglas 
 - **Sin audio** (`jetson/robot/prueba_vision_texto.py`, sin cámara ni red): reglas de la cámara 21 de 21, borrado de memoria 10 de 10, detección del nombre 11 de 11, filtro de ruido 14 de 14, y recorte de respuestas. Con `--real` toma fotos de verdad.
 - **Hablando:** la cámara se comprobó contando fotos: el servidor del Mac registró exactamente tantas fotos como peticiones de ver (5 y 5, después 2 y 2), y los intentos bloqueados no generaron ninguna.
 - **Filtro del nombre con voz real** (`jetson/robot/prueba_nombre_voz.py`: solo micrófono y Vosk, sin nube; imprime lo que oyó Vosk y si habría activado al robot). Con el nombre "Roby", Vosk dio "robin", "robby" y "robé": 2 de 3, hasta aceptar "robé". Se cambió el nombre a **Nexus**, que no se confunde con palabras comunes. Resultado: 5 de 8 (el nombre dicho como "nexus"; fallos: "sus" ×2 y "con anexos") y **ningún falso positivo** ("nexo", "texto" y frases sin nombre se ignoraron). Es una muestra pequeña. Se dejó el filtro estricto: no se acepta "sus" (palabra común). Si no oye el nombre hay que repetirlo; dentro de la ventana de 20 s no hace falta.
-- **No comprobado:** la conversación completa con el filtro activo (nombre, ventana y habla de fondo a la vez), y de dónde vienen los avisos `arecord: Device or resource busy` al arrancar.
+- **Conversación completa con voz real** (`conversar.py --ventana 5`, para no esperar 20 s): sin nombre y con la ventana cerrada, "qué hora es" y "hoy hace buen día" se ignoraron (`[ignorado]`); con "Nexus, ¿qué hora es?" respondió; el seguimiento sin nombre dentro de la ventana también respondió. Una sola pasada, 4 casos. Un fragmento sin texto también se ignoró.
+- **No comprobado:** habla de fondo continua (tele, otra persona conversando) durante varios minutos, y de dónde vienen los avisos `arecord: Device or resource busy` al arrancar.
 
 ## Privacidad
 
